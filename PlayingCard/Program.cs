@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PlayingCard
 {
@@ -17,28 +14,29 @@ namespace PlayingCard
             dealer.CreateNewDeck();
             dealer.ShowDeck();
 
-            
+
             dealer.Shuffle(number);
             Console.WriteLine($"\n... и перетасовал ее {number} раз");
             dealer.ShowDeck();
-            
+
             Console.WriteLine();
 
-            Console.WriteLine($"Сколько карт Вы желаете взять? ");
+            Console.WriteLine($"Сколько карт Вы желаете взять?: ");
             int userInput = Convert.ToInt32(Console.ReadLine());
 
             for (int i = 0; i < userInput; i++)
             {
                 dealer.HandOver();
             }
-            
+
             Console.WriteLine($"Ваши карты");
             dealer.ShowArm();
+            Console.WriteLine();
         }
     }
 
     class Dealer
-    {        
+    {
         private Deck _deck;
         private Player _player;
         private static Random _random;
@@ -72,7 +70,7 @@ namespace PlayingCard
         }
 
         public void ShowDeck()
-        {            
+        {
             _deck.ShowInfo();
         }
 
@@ -82,8 +80,8 @@ namespace PlayingCard
         }
 
         public void Shuffle(int quantity)
-        {
-            List<Card> deck = _deck.GetDeck();
+        {            
+            List<Card> deck = _deck.Cards;
 
             for (int i = 0; i < quantity; i++)
             {
@@ -100,7 +98,7 @@ namespace PlayingCard
 
         public void HandOver()
         {
-            Card card =_deck.GetCard();
+            Card card = _deck.GetCard();
             _deck.RemoveCard(card);
             _player.TakeCard(card);
         }
@@ -112,7 +110,7 @@ namespace PlayingCard
 
         public Player()
         {
-             _arm = new Deck();
+            _arm = new Deck();
         }
 
         public void TakeCard(Card card)
@@ -127,47 +125,42 @@ namespace PlayingCard
     }
 
     class Deck
-    {
-        private List<Card> _deck;
+    {        
+        public List<Card> Cards { get; private set; }
 
         public Deck()
         {
-            _deck = new List<Card>();
+            Cards = new List<Card>();
         }
 
         public void ShowInfo()
-        {            
-            for (int i = 0; i < _deck.Count; i++)
+        {
+            for (int i = 0; i < Cards.Count; i++)
             {
-                _deck[i].ToDysplay();
+                Cards[i].ToDysplay();
             }
         }
 
         public void AddNewCard(Card card)
         {
-            _deck.Add(card);
+            Cards.Add(card);
         }
 
         public void RemoveCard(Card card)
         {
-            _deck.Remove(card);
-        }
-
-        public List<Card> GetDeck()
-        {
-            return _deck;
+            Cards.Remove(card);
         }
 
         public Card GetCard()
         {
             int lastIndex = 0;
 
-            if (_deck.Count > 0)
+            if (Cards.Count >= 0)
             {
-                lastIndex = _deck.Count - 1;
+                lastIndex = Cards.Count - 1;
             }
-            
-            return _deck[lastIndex];
+
+            return Cards[lastIndex];
         }
     }
 
@@ -184,7 +177,8 @@ namespace PlayingCard
         {
             Console.ForegroundColor = Colored(Name);
             Console.Write($"{Name} ");
-        }        
+            Console.ForegroundColor = ConsoleColor.White;
+        }
 
         private ConsoleColor Colored(string name)
         {
