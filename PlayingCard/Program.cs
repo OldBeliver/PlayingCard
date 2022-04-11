@@ -116,9 +116,8 @@ namespace PlayingCard
             for (int i = 0; i < ranks.Length; i++)
             {
                 for (int j = 0; j < suits.Length; j++)
-                {
-                    string card = (ranks[i] + suits[j]);
-                    _deck.AddNewCard(new Card(card));
+                {                    
+                    _deck.AddNewCard(new Card(ranks[i], suits[j]));
                 }
             }
         }
@@ -220,23 +219,25 @@ namespace PlayingCard
 
     class Card
     {
-        public string Name { get; private set; }
+        public string Rank { get; private set; }
+        public string Suite { get; private set; }
 
-        public Card(string name)
+        public Card(string rank, string suite)
         {
-            Name = name;
+            Rank = rank;
+            Suite = suite;
         }
 
         public void ToDisplay()
         {
-            Console.ForegroundColor = SetTextColor(Name);
-            Console.Write($"{Name} ");
+            Console.ForegroundColor = SetTextColor(Suite);
+            Console.Write($"{Rank}{Suite} ");            
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        private ConsoleColor SetTextColor(string name)
+        private ConsoleColor SetTextColor(string suite)
         {
-            return (name.Contains("♥") || name.Contains("♦")) ? ConsoleColor.Red : ConsoleColor.DarkGray;
+            return (suite.Contains("♥") || suite.Contains("♦")) ? ConsoleColor.Red : ConsoleColor.DarkGray;
         }
     }
 }
