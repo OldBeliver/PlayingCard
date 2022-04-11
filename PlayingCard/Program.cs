@@ -15,19 +15,19 @@ namespace PlayingCard
     class Table
     {
         private Dealer _dealer = new Dealer();
-        private Player _player = new Player();
+        private Player _player = new Player();        
 
-        int first = 1;
-        int second = 2;
-        int third = 3;
-        int fourth = 4;
-
-        private int number;
-        private int maxCards = 36;        
-        private bool isCorrectNumber = false;
+        private int _number;
+        private int _maxCards = 36;        
+        private bool _isCorrectNumber = false;
 
         public void PlayToCard()
         {
+            int first = 1;
+            int second = 2;
+            int third = 3;
+            int fourth = 4;
+
             ShowMesage(first);
 
             _dealer.CreateNewDeck();
@@ -38,22 +38,22 @@ namespace PlayingCard
             _dealer.Shuffle(100);
             _dealer.ShowDeck();
 
-            while (isCorrectNumber == false)
+            while (_isCorrectNumber == false)
             {
                 ShowMesage(third);
                 
-                int.TryParse(Console.ReadLine(), out number);
+                int.TryParse(Console.ReadLine(), out _number);
 
-                isCorrectNumber = (number > 0 && number < maxCards);
+                _isCorrectNumber = (_number > 0 && _number < _maxCards);
 
-                if (isCorrectNumber == false)
+                if (_isCorrectNumber == false)
                 {
                     Console.WriteLine($"некорректные даныне");
-                    Console.WriteLine($"необходимо число в диапазоне от 1 до {maxCards - 1}");
+                    Console.WriteLine($"необходимо число в диапазоне от 1 до {_maxCards - 1}");
                 }
             }
 
-            HandOver(number);
+            HandOver(_number);
             ShowMesage(fourth);
             _player.ShowArm();
         }
@@ -123,6 +123,8 @@ namespace PlayingCard
         public void Shuffle(int quantity)
         {
             List<Card> deck = (List<Card>)_deck.Cards;
+            
+            lock(deck)
 
             for (int i = 0; i < quantity; i++)
             {
