@@ -19,18 +19,18 @@ namespace PlayingCard
 
         private int _shuffleQuantity = 100;
         private int _number;
-        private int _maxCards = 36;        
+        private int _maxCards = 36;
         private bool _isCorrectNumber = false;
-        
+
 
         public void PlayToCard()
-        {            
+        {
             Console.WriteLine($"Добро пожаловать за Игровой стол.");
             Console.WriteLine($"Специально для Вас мы распечатали новую колоду:");
 
             _dealer.CreateNewDeck();
             _dealer.ShowDeck();
-            
+
             Console.WriteLine($"\nи тщательно перемешали ее тасованием Ханафуда,");
             Console.WriteLine($"- это когда несколько карт вынимают из любой части колоды и перемещают наверх.");
             Console.WriteLine($"Поэтому алгоритм тасования колоды будет отличаться от привычного Вам.\n");
@@ -39,7 +39,7 @@ namespace PlayingCard
             _dealer.ShowDeck();
 
             while (_isCorrectNumber == false)
-            {                
+            {
                 Console.WriteLine($"\nСколько карт желаете взять?:");
 
                 int.TryParse(Console.ReadLine(), out _number);
@@ -54,7 +54,7 @@ namespace PlayingCard
             }
 
             HandOver(_number);
-            
+
             Console.WriteLine($"Ваши карты:");
             _player.ShowArm();
         }
@@ -66,20 +66,13 @@ namespace PlayingCard
                 Card card = _dealer.GetCard();
                 _dealer.RemoveCard(card);
                 _player.TakeCard(card);
-            }            
+            }
         }
     }
 
     class Dealer
     {
-        private static Random _random;
-
         private Deck _deck;
-
-        static Dealer()
-        {
-            _random = new Random();
-        }
 
         public void CreateNewDeck()
         {
@@ -91,27 +84,16 @@ namespace PlayingCard
             for (int i = 0; i < ranks.Length; i++)
             {
                 for (int j = 0; j < suits.Length; j++)
-                {                    
+                {
                     _deck.AddNewCard(new Card(ranks[i], suits[j]));
                 }
             }
         }
         public void Shuffle(int quantity)
         {
-            List<Card> deck = (List<Card>)_deck.Cards;
-            
-            lock(deck)
-
             for (int i = 0; i < quantity; i++)
             {
-                int depth = _random.Next(deck.Count);
-                int range = _random.Next(1, deck.Count - depth);
-
-                Card[] tempSlice = new Card[range];
-
-                deck.CopyTo(depth, tempSlice, 0, range);
-                deck.RemoveRange(depth, range);
-                deck.InsertRange(0, tempSlice);
+                _deck.Shuffle();
             }
         }
 
@@ -155,10 +137,17 @@ namespace PlayingCard
 
     class Deck
     {
+        private static Random _random;
+
         private int firstIndex = 0;
 
         private List<Card> _cards;
         public IReadOnlyList<Card> Cards => _cards;
+
+        static Deck()
+        {
+            _random = new Random();
+        }
 
         public Deck()
         {
@@ -184,13 +173,25 @@ namespace PlayingCard
         }
 
         public Card GetCard()
-        {            
+        {
             Card card = null;
 
             if (_cards.Count > 0)
                 card = _cards[firstIndex];
 
             return card;
+        }
+
+        public void Shuffle()
+        {
+            int depth = _random.Next(_cards.Count);
+            int range = _random.Next(1, _cards.Count - depth);
+
+            Card[] tempSlice = new Card[range];
+
+            _cards.CopyTo(depth, tempSlice, 0, range);
+            _cards.RemoveRange(depth, range);
+            _cards.InsertRange(0, tempSlice);
         }
     }
 
@@ -208,7 +209,7 @@ namespace PlayingCard
         public void ToDisplay()
         {
             Console.ForegroundColor = SetTextColor(Suite);
-            Console.Write($"{Rank}{Suite} ");            
+            Console.Write($"{Rank}{Suite} ");
             Console.ForegroundColor = ConsoleColor.White;
         }
 
