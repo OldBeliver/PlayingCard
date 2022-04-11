@@ -17,11 +17,9 @@ namespace PlayingCard
         private Dealer _dealer = new Dealer();
         private Player _player = new Player();
 
-
         private int _shuffleQuantity = 100;
         private int _number;        
         private bool _isCorrectNumber = false;
-
 
         public void PlayToCard()
         {
