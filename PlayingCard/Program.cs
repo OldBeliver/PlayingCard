@@ -20,7 +20,7 @@ namespace PlayingCard
         private int number;
         private int maxCards = 36;
         private bool isNumber = false;
-        private bool isCorrectRange = false;
+        private bool isCorrectNumber = false;
 
         public void PlayToCard()
         {
@@ -34,15 +34,15 @@ namespace PlayingCard
             _dealer.Shuffle(100);
             _dealer.ShowDeck();
 
-            while (isNumber == false || isCorrectRange == false)
+            while (isNumber == false || isCorrectNumber == false)
             {
                 ShowMesage(3);
 
                 isNumber = TryGetNumber(Console.ReadLine(), out number);
 
-                isCorrectRange = (number > 0 && number < maxCards);
+                isCorrectNumber = (number > 0 && number < maxCards);
 
-                if (isNumber == false || isCorrectRange == false)
+                if (isNumber == false || isCorrectNumber == false)
                 {
                     Console.WriteLine($"некорректные даныне");
                     Console.WriteLine($"необходимо число в диапазоне от 1 до {maxCards - 1}");
@@ -52,7 +52,6 @@ namespace PlayingCard
             HandOver(number);
             ShowMesage(4);
             _player.ShowArm();
-
         }
 
         private void ShowMesage(int number)
@@ -111,14 +110,14 @@ namespace PlayingCard
         {
             _deck = new Deck();
 
-            string[] values = new string[] { "6", "7", "8", "9", "10", "В", "К", "Д", "Т" };
+            string[] ranks = new string[] { "6", "7", "8", "9", "10", "В", "К", "Д", "Т" };
             string[] suits = new string[] { "♠", "♣", "♦", "♥" };
 
-            for (int i = 0; i < values.Length; i++)
+            for (int i = 0; i < ranks.Length; i++)
             {
                 for (int j = 0; j < suits.Length; j++)
                 {
-                    string card = (values[i] + suits[j]);
+                    string card = (ranks[i] + suits[j]);
                     _deck.AddNewCard(new Card(card));
                 }
             }
@@ -180,7 +179,7 @@ namespace PlayingCard
 
     class Deck
     {
-        private int firstCardIndex = 0;
+        private int firstIndex = 0;
 
         private List<Card> _cards;
         public IReadOnlyList<Card> Cards => _cards;
@@ -208,14 +207,12 @@ namespace PlayingCard
             _cards.Remove(card);
         }
 
-
-
         public Card GetCard()
-        {
-            Card card = new Card("пустышка");
+        {            
+            Card card = null;
 
             if (_cards.Count > 0)
-                card = _cards[firstCardIndex];
+                card = _cards[firstIndex];
 
             return card;
         }
