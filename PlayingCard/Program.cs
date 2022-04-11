@@ -17,6 +17,11 @@ namespace PlayingCard
         private Dealer _dealer = new Dealer();
         private Player _player = new Player();
 
+        int first = 1;
+        int second = 2;
+        int third = 3;
+        int fourth = 4;
+
         private int number;
         private int maxCards = 36;
         private bool isNumber = false;
@@ -24,19 +29,19 @@ namespace PlayingCard
 
         public void PlayToCard()
         {
-            ShowMesage(1);
+            ShowMesage(first);
 
             _dealer.CreateNewDeck();
             _dealer.ShowDeck();
 
-            ShowMesage(2);
+            ShowMesage(second);
 
             _dealer.Shuffle(100);
             _dealer.ShowDeck();
 
             while (isNumber == false || isCorrectNumber == false)
             {
-                ShowMesage(3);
+                ShowMesage(third);
 
                 isNumber = TryGetNumber(Console.ReadLine(), out number);
 
@@ -50,7 +55,7 @@ namespace PlayingCard
             }
 
             HandOver(number);
-            ShowMesage(4);
+            ShowMesage(fourth);
             _player.ShowArm();
         }
 
