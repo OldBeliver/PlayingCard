@@ -22,26 +22,24 @@ namespace PlayingCard
         private bool _isCorrectNumber = false;
 
         public void PlayToCard()
-        {
-            int first = 1;
-            int second = 2;
-            int third = 3;
-            int fourth = 4;
-
-            ShowMesage(first);
+        {            
+            Console.WriteLine($"Добро пожаловать за Игровой стол.");
+            Console.WriteLine($"Специально для Вас мы распечатали новую колоду:");
 
             _dealer.CreateNewDeck();
             _dealer.ShowDeck();
-
-            ShowMesage(second);
+            
+            Console.WriteLine($"\nи тщательно перемешали ее тасованием Ханафуда,");
+            Console.WriteLine($"- это когда несколько карт вынимают из любой части колоды и перемещают наверх.");
+            Console.WriteLine($"Поэтому алгоритм тасования колоды будет отличаться от привычного Вам.\n");
 
             _dealer.Shuffle(100);
             _dealer.ShowDeck();
 
             while (_isCorrectNumber == false)
-            {
-                ShowMesage(third);
-                
+            {                
+                Console.WriteLine($"\nСколько карт желаете взять?:");
+
                 int.TryParse(Console.ReadLine(), out _number);
 
                 _isCorrectNumber = (_number > 0 && _number < _maxCards);
@@ -54,33 +52,9 @@ namespace PlayingCard
             }
 
             HandOver(_number);
-            ShowMesage(fourth);
+            
+            Console.WriteLine($"Ваши карты:");
             _player.ShowArm();
-        }
-
-        private void ShowMesage(int number)
-        {
-            switch (number)
-            {
-                case 1:
-                    Console.WriteLine($"Добро пожаловать за Игровой стол.");
-                    Console.WriteLine($"Специально для Вас мы распечатали новую колоду:");
-                    break;
-                case 2:
-                    Console.WriteLine($"\nи тщательно перемешали ее тасованием Ханафуда,");
-                    Console.WriteLine($"- это когда несколько карт вынимают из любой части колоды и перемещают наверх.");
-                    Console.WriteLine($"Поэтому алгоритм тасования колоды будет отличаться от привычного Вам.\n");
-                    break;
-                case 3:
-                    Console.WriteLine($"\nСколько карт желаете взять?:");
-                    break;
-                case 4:
-                    Console.WriteLine($"Ваши карты:");
-                    break;
-                default:
-                    Console.WriteLine($"внештатная ситуация, обратитесь к разработчику");
-                    break;
-            }
         }
 
         private void HandOver(int number)
