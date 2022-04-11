@@ -17,9 +17,9 @@ namespace PlayingCard
         private Dealer _dealer = new Dealer();
         private Player _player = new Player();
 
+
         private int _shuffleQuantity = 100;
-        private int _number;
-        private int _maxCards = 36;
+        private int _number;        
         private bool _isCorrectNumber = false;
 
 
@@ -40,6 +40,8 @@ namespace PlayingCard
 
             while (_isCorrectNumber == false)
             {
+                int _maxCards = _dealer.GetCount();
+
                 Console.WriteLine($"\nСколько карт желаете взять?:");
 
                 int.TryParse(Console.ReadLine(), out _number);
@@ -111,6 +113,11 @@ namespace PlayingCard
         public void RemoveCard(Card card)
         {
             _deck.RemoveCard(card);
+        }
+
+        public int GetCount()
+        {
+            return _deck.Cards.Count;
         }
     }
 
