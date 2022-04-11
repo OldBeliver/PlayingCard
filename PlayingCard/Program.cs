@@ -15,11 +15,13 @@ namespace PlayingCard
     class Table
     {
         private Dealer _dealer = new Dealer();
-        private Player _player = new Player();        
+        private Player _player = new Player();
 
+        private int _shuffleQuantity = 100;
         private int _number;
         private int _maxCards = 36;        
         private bool _isCorrectNumber = false;
+        
 
         public void PlayToCard()
         {            
@@ -33,7 +35,7 @@ namespace PlayingCard
             Console.WriteLine($"- это когда несколько карт вынимают из любой части колоды и перемещают наверх.");
             Console.WriteLine($"Поэтому алгоритм тасования колоды будет отличаться от привычного Вам.\n");
 
-            _dealer.Shuffle(100);
+            _dealer.Shuffle(_shuffleQuantity);
             _dealer.ShowDeck();
 
             while (_isCorrectNumber == false)
@@ -46,7 +48,7 @@ namespace PlayingCard
 
                 if (_isCorrectNumber == false)
                 {
-                    Console.WriteLine($"некорректные даныне");
+                    Console.WriteLine($"некорректные данные");
                     Console.WriteLine($"необходимо число в диапазоне от 1 до {_maxCards - 1}");
                 }
             }
