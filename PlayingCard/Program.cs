@@ -23,8 +23,7 @@ namespace PlayingCard
         int fourth = 4;
 
         private int number;
-        private int maxCards = 36;
-        private bool isNumber = false;
+        private int maxCards = 36;        
         private bool isCorrectNumber = false;
 
         public void PlayToCard()
@@ -39,15 +38,15 @@ namespace PlayingCard
             _dealer.Shuffle(100);
             _dealer.ShowDeck();
 
-            while (isNumber == false || isCorrectNumber == false)
+            while (isCorrectNumber == false)
             {
                 ShowMesage(third);
-
-                isNumber = TryGetNumber(Console.ReadLine(), out number);
+                
+                int.TryParse(Console.ReadLine(), out number);
 
                 isCorrectNumber = (number > 0 && number < maxCards);
 
-                if (isNumber == false || isCorrectNumber == false)
+                if (isCorrectNumber == false)
                 {
                     Console.WriteLine($"некорректные даныне");
                     Console.WriteLine($"необходимо число в диапазоне от 1 до {maxCards - 1}");
@@ -82,11 +81,6 @@ namespace PlayingCard
                     Console.WriteLine($"внештатная ситуация, обратитесь к разработчику");
                     break;
             }
-        }
-
-        private bool TryGetNumber(string userInput, out int number)
-        {
-            return int.TryParse(userInput, out number);
         }
 
         private void HandOver(int number)
