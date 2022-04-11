@@ -7,81 +7,125 @@ namespace PlayingCard
     {
         static void Main(string[] args)
         {
-            Dealer dealer = new Dealer();
-            int number = 100;
+            Table table = new Table();
+            table.PlayToCard();
+        }
+    }
 
-            Console.WriteLine($"дилер распечатал новую колоду карт");
-            dealer.CreateNewDeck();
-            dealer.ShowDeck();
+    class Table
+    {
+        private Dealer _dealer = new Dealer();
+        private Player _player = new Player();
 
+        private int number;
+        private int maxCards = 36;
+        private bool isNumber = false;
+        private bool isCorrectRange = false;
 
-            dealer.Shuffle(number);
-            Console.WriteLine($"\n... и перетасовал ее {number} раз");
-            dealer.ShowDeck();
+        public void PlayToCard()
+        {
+            ShowMesage(1);
 
-            Console.WriteLine();
+            _dealer.CreateNewDeck();
+            _dealer.ShowDeck();
 
-            Console.WriteLine($"Сколько карт Вы желаете взять?: ");
-            int userInput = Convert.ToInt32(Console.ReadLine());
+            ShowMesage(2);
 
-            for (int i = 0; i < userInput; i++)
+            _dealer.Shuffle(100);
+            _dealer.ShowDeck();
+
+            while (isNumber == false || isCorrectRange == false)
             {
-                dealer.HandOver();
+                ShowMesage(3);
+
+                isNumber = TryGetNumber(Console.ReadLine(), out number);
+
+                isCorrectRange = (number > 0 && number < maxCards);
+
+                if (isNumber == false || isCorrectRange == false)
+                {
+                    Console.WriteLine($"некорректные даныне");
+                    Console.WriteLine($"необходимо число в диапазоне от 1 до {maxCards - 1}");
+                }
             }
 
-            Console.WriteLine($"Ваши карты");
-            dealer.ShowArm();
-            Console.WriteLine();
+            HandOver(number);
+            ShowMesage(4);
+            _player.ShowArm();
+
+        }
+
+        private void ShowMesage(int number)
+        {
+            switch (number)
+            {
+                case 1:
+                    Console.WriteLine($"Добро пожаловать за Игровой стол.");
+                    Console.WriteLine($"Специально для Вас мы распечатали новую колоду:");
+                    break;
+                case 2:
+                    Console.WriteLine($"\nи тщательно перемешали ее тасованием Ханафуда,");
+                    Console.WriteLine($"- это когда несколько карт вынимают из любой части колоды и перемещают наверх.");
+                    Console.WriteLine($"Поэтому алгоритм тасования колоды будет отличаться от привычного Вам.\n");
+                    break;
+                case 3:
+                    Console.WriteLine($"\nСколько карт желаете взять?:");
+                    break;
+                case 4:
+                    Console.WriteLine($"Ваши карты:");
+                    break;
+                default:
+                    Console.WriteLine($"внештатная ситуация, обратитесь к разработчику");
+                    break;
+            }
+        }
+
+        private bool TryGetNumber(string userInput, out int number)
+        {
+            return int.TryParse(userInput, out number);
+        }
+
+        private void HandOver(int number)
+        {
+            for (int i = 0; i < number; i++)
+            {
+                Card card = _dealer.GetCard();
+                _dealer.RemoveCard(card);
+                _player.TakeCard(card);
+            }            
         }
     }
 
     class Dealer
     {
-        private Deck _deck;
-        private Player _player;
         private static Random _random;
+
+        private Deck _deck;
 
         static Dealer()
         {
             _random = new Random();
         }
 
-        public Dealer()
-        {
-            _player = new Player();
-        }
-
-        public Deck CreateNewDeck()
+        public void CreateNewDeck()
         {
             _deck = new Deck();
-            string[] name = new string[] { "6", "7", "8", "9", "10", "В", "К", "Д", "Т" };
-            string[] suit = new string[] { "♠", "♣", "♦", "♥" };
 
-            for (int j = 0; j < name.Length; j++)
+            string[] values = new string[] { "6", "7", "8", "9", "10", "В", "К", "Д", "Т" };
+            string[] suits = new string[] { "♠", "♣", "♦", "♥" };
+
+            for (int i = 0; i < values.Length; i++)
             {
-                for (int i = 0; i < suit.Length; i++)
+                for (int j = 0; j < suits.Length; j++)
                 {
-                    string card = (name[j] + suit[i]);
+                    string card = (values[i] + suits[j]);
                     _deck.AddNewCard(new Card(card));
                 }
             }
-
-            return _deck;
         }
-
-        public void ShowDeck()
-        {
-            _deck.ShowInfo();
-        }
-
-        public void ShowArm()
-        {
-            _player.ShowArm();
-        }
-
         public void Shuffle(int quantity)
-        {            
-            List<Card> deck = _deck.Cards;
+        {
+            List<Card> deck = (List<Card>)_deck.Cards;
 
             for (int i = 0; i < quantity; i++)
             {
@@ -96,11 +140,20 @@ namespace PlayingCard
             }
         }
 
-        public void HandOver()
+        public void ShowDeck()
         {
-            Card card = _deck.GetCard();
+            _deck.ShowCards();
+            Console.WriteLine();
+        }
+
+        public Card GetCard()
+        {
+            return _deck.GetCard();
+        }
+
+        public void RemoveCard(Card card)
+        {
             _deck.RemoveCard(card);
-            _player.TakeCard(card);
         }
     }
 
@@ -113,54 +166,58 @@ namespace PlayingCard
             _arm = new Deck();
         }
 
+        public void ShowArm()
+        {
+            _arm.ShowCards();
+            Console.WriteLine();
+        }
+
         public void TakeCard(Card card)
         {
             _arm.AddNewCard(card);
         }
-
-        public void ShowArm()
-        {
-            _arm.ShowInfo();
-        }
     }
 
     class Deck
-    {        
-        public List<Card> Cards { get; private set; }
+    {
+        private int firstCardIndex = 0;
+
+        private List<Card> _cards;
+        public IReadOnlyList<Card> Cards => _cards;
 
         public Deck()
         {
-            Cards = new List<Card>();
+            _cards = new List<Card>();
         }
 
-        public void ShowInfo()
+        public void ShowCards()
         {
-            for (int i = 0; i < Cards.Count; i++)
+            for (int i = 0; i < _cards.Count; i++)
             {
-                Cards[i].ToDysplay();
+                _cards[i].ToDisplay();
             }
         }
 
         public void AddNewCard(Card card)
         {
-            Cards.Add(card);
+            _cards.Add(card);
         }
 
         public void RemoveCard(Card card)
         {
-            Cards.Remove(card);
+            _cards.Remove(card);
         }
+
+
 
         public Card GetCard()
         {
-            int lastIndex = 0;
+            Card card = new Card("пустышка");
 
-            if (Cards.Count >= 0)
-            {
-                lastIndex = Cards.Count - 1;
-            }
+            if (_cards.Count > 0)
+                card = _cards[firstCardIndex];
 
-            return Cards[lastIndex];
+            return card;
         }
     }
 
@@ -173,16 +230,16 @@ namespace PlayingCard
             Name = name;
         }
 
-        public void ToDysplay()
+        public void ToDisplay()
         {
-            Console.ForegroundColor = Colored(Name);
+            Console.ForegroundColor = SetTextColor(Name);
             Console.Write($"{Name} ");
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        private ConsoleColor Colored(string name)
+        private ConsoleColor SetTextColor(string name)
         {
-            return (name.Contains("♥") || name.Contains("♦")) ? ConsoleColor.Red : ConsoleColor.White;
+            return (name.Contains("♥") || name.Contains("♦")) ? ConsoleColor.Red : ConsoleColor.DarkGray;
         }
     }
 }
